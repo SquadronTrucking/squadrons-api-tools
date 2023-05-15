@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Squadron Trucking | API Documentation</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <!-- VENDOR CSS -->
+    <link
+      rel="stylesheet"
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/vendor/font-awesome/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="assets/vendor/linearicons/style.css" />
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!-- FOR DEMO PURPOSES ONLY. You should remove this in your project -->
+    <link rel="stylesheet" href="assets/css/demo.css" />
+    <!-- GOOGLE FONTS -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700"
+      rel="stylesheet"
+    />
+    <!-- ICONS -->
+    <link
+      rel="apple-touch-icon"
+      sizes="76x76"
+      href="assets/img/apple-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="assets/img/favicon.png"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+
+  <body>
+    <!-- WRAPPER -->
+    <div id="wrapper">
+      <!-- NAVBAR -->
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="brand">
+          <a href="index.html"
+            ><img
+              src="assets/img/sq.png"
+              alt="Klorofil Logo"
+			  height="20px"
+			  width="100px"
+              class="img-responsive logo"
+          /></a>
+        </div>
+        <div class="container-fluid">
+          <div class="navbar-btn">
+            <button type="button" class="btn-toggle-fullwidth">
+              <i class="lnr lnr-arrow-left-circle"></i>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <!-- END NAVBAR -->
+      <!-- LEFT SIDEBAR -->
+      <div id="sidebar-nav" class="sidebar">
+        <div class="sidebar-scroll">
+          <nav>
+            <ul class="nav">
+              <li>
+                <a href="#" class=""
+                  ><i class="lnr lnr-home"></i> <span>Dashboard</span></a
+                >
+              </li>
+
+              <li>
+                <a href="#subPages6" data-toggle="collapse" class="collapsed"
+                  ><i class="lnr lnr-file-empty"></i>
+                  <span>Distance Matrix</span>
+                  <i class="icon-submenu lnr lnr-chevron-left"></i
+                ></a>
+                <div id="subPages6" class="collapse">
+                  <ul class="nav">
+                    <li>
+                      <a href="#" class=""
+                        >Distance &nbsp;
+                        <span class="label label-success">GET</span></a
+                      >
+                    </li>
+                    <li>
+                      <a href="#new-content" class=""
+                        >Estimate Distance &nbsp;
+                        <span class="label label-primary">POST</span></a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <!-- END LEFT SIDEBAR -->
+      <!-- MAIN -->
+      <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+          <div class="container-fluid">
+            <h3 class="page-title">Distance</h3>
+            <h4 class="page-title">
+              This API route is a GET request that calculates the distance and
+              duration between an origin address and a destination address
+            </h4>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Example URL</h3>
+                  </div>
+                  <div class="panel-body">
+                    <pre>
+https://api.distancematrix.ai/maps/api/distancematrix/json?origins={origin_address}&destinations={destination_address}&key={your_api_key}</pre
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <!-- TABLE HOVER -->
+                <div class="panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Request</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Parameter</th>
+                          <th>Type</th>
+                          <th>Position</th>
+                          <th>#</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>API Key</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Your SQUADTRON API key.</td>
+                        </tr>
+                        <tr>
+                          <td>origins</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Point or Location to leave.</td>
+                        </tr>
+                        <tr>
+                          <td>destinations</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Point or Location to reach.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Response</h3>
+                    </div>
+                    <div class="panel-body">
+                      <pre>
+{
+   {
+    "destination_addresses": [
+        "Your Destination Address"
+    ],
+    "origin_addresses": [
+        "Your Origin Address"
+    ],
+    "rows": [
+        {
+            "elements": [
+                {
+                    "distance": {
+                        "text": "distance in text",
+                        "value": distance in meters
+                    },
+                    "duration": {
+                        "text": "duration in text",
+                        "value": duration in seconds
+                    },
+                    "origin": "origin",
+                    "destination": "destination",
+                    "status": "OK"
+                }
+            ]
+        }
+    ],
+    "status": "OK"
+}
+}</pre
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- END TABLE HOVER -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="main-content" id="new-content">
+          <div class="container-fluid">
+            <h3 class="page-title">Estimate Distance</h3>
+            <h4 class="page-title">
+              This API route estimates the distance and duration between an
+              origin address and a destination address, considering optional
+              routes (intermediate stops) along the way.
+            </h4>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Example URL</h3>
+                  </div>
+                  <div class="panel-body">
+                    <pre>
+https://api.distancematrix.ai/maps/api/distancematrix/json?{origin_address}/{destination_address}/{arrival_time}</pre
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <!-- TABLE HOVER -->
+                <div class="panel">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Request</h3>
+                  </div>
+                  <div class="panel-body">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Parameter</th>
+                          <th>Type</th>
+                          <th>Position</th>
+                          <th>#</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>API Key</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Your SQUADTRON API key.</td>
+                        </tr>
+                        <tr>
+                          <td>origin</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Point or Location to leave.</td>
+                        </tr>
+                        <tr>
+                          <td>destination</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>Point or Location to reach.</td>
+                        </tr>
+                        <tr>
+                          <td>Arrival Time</td>
+                          <td><code>string</code></td>
+                          <td><code>query param</code></td>
+                          <td><code>Required</code></td>
+                          <td>
+                            The arrival time must be in "YYYY-MM-DDTHH:MM:SSZ"
+                            format
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>restAreas</td>
+                          <td><code>object</code></td>
+                          <td><code>body</code></td>
+                          <td><code>Required</code></td>
+                          <td>optional routes in between.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Response</h3>
+                    </div>
+                    <div class="panel-body">
+                      <pre>
+{
+	"distance": {
+		"text": "distance in text",
+		"value": distance in meters
+	},
+	"duration": {
+		"text": "duration in text",
+		"value": duration in seconds
+	},
+	"origin": "origin address",
+	"destination": "destination address",
+	"status": "OK",
+	"departureTime": "current time of departure",
+	"arrivalTime": "arrival time"
+},
+{
+	"distance": {
+		"text": "distance in text",
+		"value": distance in meters
+	},
+	"duration": {
+		"text": "duration in text",
+		"value": duration in seconds
+	},
+	"origin": "origin address",
+	"destination": "destination address",
+	"status": "OK",
+	"departureTime": "current time of departure",
+	"arrivalTime": "arrival time"
+}
+										</pre
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- END TABLE HOVER -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- END MAIN CONTENT -->
+      </div>
+      <!-- END MAIN -->
+      <div class="clearfix"></div>
+      <footer>
+        <div class="container-fluid">
+          <p class="copyright">
+            &copy; 2023
+            <a href="https://www.squadrontrucking.com/" target="_blank"
+              >SQUADTRON Trucking</a
+            >. All Rights Reserved.
+          </p>
+        </div>
+      </footer>
+    </div>
+    <!-- END WRAPPER -->
+    <!-- Javascript -->
+    <script>
+      $(document).ready(function () {
+        $("pre code").each(function (i, block) {
+          hljs.highlightBlock(block);
+        });
+      });
+    </script>
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="assets/scripts/klorofil-common.js"></script>
+  </body>
+</html>
