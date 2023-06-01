@@ -22,90 +22,48 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
   }
 });
 
-router.post(
-  "/estimate/:origins/:destinations/:arrivalTime",
-  async (req, res, next) => {
-    const { origins, destinations, arrivalTime } = req.params;
-    const { restAreas } = req.body;
-    const key = "km4BvMVHSpKRoUubcVBeDyiE0H5Ec";
+router.post("/estimate", async (req, res, next) => {
+  try {
+    const { origin, destination, arrivalTime, stops } = req.body;
 
-    try {
-      const distances = [];
-      const departureTime = new Date();
+    const hosDuration = moment.duration({ hours: 12, minutes: 45 });
+    let currentArrivalTime = moment(arrivalTime, "HH:mm");
 
-      const originToFirstRestAreaUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origins}&destinations=${restAreas[0]}&key=${key}`;
-      const originToFirstRestAreaResponse = await axios.get(
-        originToFirstRestAreaUrl
-      );
-      const originToFirstRestArea =
-        originToFirstRestAreaResponse.data.rows[0].elements[0];
-      const durationInSeconds = originToFirstRestArea.duration.value;
+    const dataArr = await Promise.all(
+      stops.map(async (stop, index) => {
+        const { data } = await axios.get(
+          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${currentArrivalTime.unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+        );
+        console.log(data);
 
-      const arrivalTime = moment(departureTime).add(
-        durationInSeconds,
-        "seconds"
-      );
-      console.log(arrivalTime);
+        const durationValue = data.rows[0].elements[0].duration.value;
+        const durationText = data.rows[0].elements[0].duration.text;
 
-      distances.push({
-        ...originToFirstRestArea,
-        departureTime: departureTime,
-        arrivalTime: arrivalTime,
-      });
+        let formattedTime;
+        if (index === 0) {
+          formattedTime = currentArrivalTime
+            .add(durationValue, "seconds")
+            .format("HH:mm");
+        } else {
+          formattedTime = currentArrivalTime
+            .add(durationValue, "seconds")
+            .format("HH:mm");
+        }
 
-      let previousArrivalTime = moment(arrivalTime);
+        currentArrivalTime = moment(formattedTime, "HH:mm");
 
-      for (let i = 0; i < restAreas.length - 1; i++) {
-        const currentRestArea = restAreas[i];
-        const nextRestArea = restAreas[i + 1];
+        return {
+          data,
+          "time#1": formattedTime,
+        };
+      })
+    );
 
-        const restAreaUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${currentRestArea}&destinations=${nextRestArea}&key=${key}`;
-        const restAreaResponse = await axios.get(restAreaUrl);
-        const restArea = restAreaResponse.data.rows[0].elements[0];
-
-        const departureTime = previousArrivalTime.format(); // Use previous arrival time as departure time
-        const durationInSeconds = restArea.duration.value;
-        const arrivalTime = moment(departureTime)
-          .add(durationInSeconds, "seconds")
-          .format(); // Calculate arrival time
-
-        distances.push({
-          ...restArea,
-          departureTime: departureTime,
-          arrivalTime: arrivalTime,
-        });
-
-        previousArrivalTime = moment(arrivalTime);
-      }
-
-      const lastRestAreaToDestinationUrl = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${
-        restAreas[restAreas.length - 1]
-      }&destinations=${destinations}&key=${key}`;
-      const lastRestAreaToDestinationResponse = await axios.get(
-        lastRestAreaToDestinationUrl
-      );
-      const lastRestAreaToDestination =
-        lastRestAreaToDestinationResponse.data.rows[0].elements[0];
-
-      const departureTimeLast = previousArrivalTime.format();
-      const durationInSecondsLast = lastRestAreaToDestination.duration.value;
-      const arrivalTimeLast = moment(departureTimeLast)
-        .add(durationInSecondsLast, "seconds")
-        .format();
-
-      distances.push({
-        ...lastRestAreaToDestination,
-        departureTime: departureTimeLast,
-        arrivalTime: arrivalTimeLast,
-      });
-
-      res.send(distances);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("An error occurred");
-    }
+    res.json(dataArr);
+  } catch (error) {
+    console.log(error);
   }
-);
+});
 
 router.get("/docs", (req, res) => {
   res.render("doc");
