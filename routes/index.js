@@ -22,35 +22,62 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
   }
 });
 
+// router.post("/estimate", async (req, res, next) => {
+//   try {
+//     const { origin, destination, arrivalTime, stops } = req.body;
+
+//     const dataArr = await Promise.all(
+//       stops.map(async (stop) => {
+//         const { data } = await axios.get(
+//           `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${moment(
+//             arrivalTime,
+//             "HH:mm"
+//           ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+//         );
+//         console.log(data);
+
+//         const durationValue = data.rows[0].elements[0].duration.value;
+//         const durationText = data.rows[0].elements[0].duration.text;
+//         const arrivalTimeMoment = moment(arrivalTime, "HH:mm");
+//         const formattedTime = arrivalTimeMoment
+//           .add(durationValue, "seconds")
+//           .format("HH:mm");
+
+//         return {
+//           data,
+//           "time#1": formattedTime,
+//         };
+//       })
+//     );
+
+//     res.json(dataArr);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 router.post("/estimate", async (req, res, next) => {
   try {
     const { origin, destination, arrivalTime, stops } = req.body;
 
-    const hosDuration = moment.duration({ hours: 12, minutes: 45 });
-    let currentArrivalTime = moment(arrivalTime, "HH:mm");
-
     const dataArr = await Promise.all(
-      stops.map(async (stop, index) => {
+      stops.map(async (stop) => {
         const { data } = await axios.get(
-          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${currentArrivalTime.unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${moment(
+            arrivalTime,
+            "HH:mm"
+          ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
         );
         console.log(data);
 
         const durationValue = data.rows[0].elements[0].duration.value;
         const durationText = data.rows[0].elements[0].duration.text;
 
-        let formattedTime;
-        if (index === 0) {
-          formattedTime = currentArrivalTime
-            .add(durationValue, "seconds")
-            .format("HH:mm");
-        } else {
-          formattedTime = currentArrivalTime
-            .add(durationValue, "seconds")
-            .format("HH:mm");
-        }
+        const arrivalTimeMoment = moment(arrivalTime, "HH:mm");
+        const HOS = moment.duration({ hours: 12, minutes: 45 }); // 12 hours and 45 minutes HOS
+        arrivalTimeMoment.add(HOS); // Add HOS to the arrival time
+        arrivalTimeMoment.subtract(durationValue, "seconds"); // Subtract the duration from the arrival time
 
-        currentArrivalTime = moment(formattedTime, "HH:mm");
+        const formattedTime = arrivalTimeMoment.format("HH:mm");
 
         return {
           data,
