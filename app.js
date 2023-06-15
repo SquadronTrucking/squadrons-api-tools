@@ -6,6 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const { calculateDistances } = require('./util/getDistance');
 
 var app = express();
 
@@ -37,5 +38,14 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+!(async function () {
+  let data = await calculateDistances(
+    "7144 Otay Mesa Rd, San Diego, CA 92154",
+    "17400 Von Karman Ave, Irvine, CA 92614",
+    "900 E Cooley Ave, San. Bernardino, Ca"
+  );
+  console.log(data);
+})();
 
 module.exports = app;

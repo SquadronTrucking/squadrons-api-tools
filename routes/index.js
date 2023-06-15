@@ -1,6 +1,11 @@
 var express = require("express");
 var axios = require("axios");
 const moment = require("moment/moment");
+const {
+  calculateDistances,
+  addTimes,
+  subtractTimes,
+} = require("../util/getDistance");
 var router = express.Router();
 
 router.use(express.json());
@@ -9,7 +14,7 @@ router.use(express.json());
 router.get("/distance/:origins/:destinations", async (req, res, next) => {
   const { origins } = req.params;
   const { destinations } = req.params;
-  const key = "km4BvMVHSpKRoUubcVBeDyiE0H5Ec";
+  const key = "wNKvwwrlvWheyBOd84pP8uIsbqhW1";
   const url = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origins}&destinations=${destinations}&departure_time=now&key=${key}`;
 
   try {
@@ -22,52 +27,28 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
   }
 });
 
-// router.post("/estimate", async (req, res, next) => {
-//   try {
-//     const { origin, destination, arrivalTime, stops } = req.body;
-
-//     const dataArr = await Promise.all(
-//       stops.map(async (stop) => {
-//         const { data } = await axios.get(
-//           `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${moment(
-//             arrivalTime,
-//             "HH:mm"
-//           ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
-//         );
-//         console.log(data);
-
-//         const durationValue = data.rows[0].elements[0].duration.value;
-//         const durationText = data.rows[0].elements[0].duration.text;
-//         const arrivalTimeMoment = moment(arrivalTime, "HH:mm");
-//         const formattedTime = arrivalTimeMoment
-//           .add(durationValue, "seconds")
-//           .format("HH:mm");
-
-//         return {
-//           data,
-//           "time#1": formattedTime,
-//         };
-//       })
-//     );
-
-//     res.json(dataArr);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
 router.post("/estimate", async (req, res, next) => {
   try {
     const { origin, destination, arrivalTime, stops } = req.body;
 
     const dataArr = await Promise.all(
-      stops.map(async (stop) => {
+      stops.map(async (stop, index) => {
         const { data } = await axios.get(
-          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${destination}&arrival_time=${moment(
+          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&mode=driving&destinations=${destination}&arrival_time=${moment(
             arrivalTime,
             "HH:mm"
           ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
         );
-        console.log(data);
+
+        //for time#calculation
+        const res = await axios.get(
+          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${
+            stop[index + 1]
+          }&mode=driving&arrival_time=${moment(
+            arrivalTime,
+            "HH:mm"
+          ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+        );
 
         const durationValue = data.rows[0].elements[0].duration.value;
         const durationText = data.rows[0].elements[0].duration.text;
@@ -79,10 +60,28 @@ router.post("/estimate", async (req, res, next) => {
 
         const formattedTime = arrivalTimeMoment.format("HH:mm");
 
-        return {
-          data,
-          "time#1": formattedTime,
-        };
+        if (index == stops.length - 1) {
+          console.log("Skipping time # 2 for final path");
+          return {
+            data,
+            "time#1": formattedTime,
+            "time#2": null,
+          };
+        } else {
+          let time_2_hours = await calculateDistances(
+            `${stops[index]}`,
+            `${stops[index + 1]}`,
+            `${destination}`
+          );
+
+          let added_time = addTimes(arrivalTime, "12:45");
+
+          return {
+            data,
+            "time#1": formattedTime,
+            "time#2": subtractTimes(`${added_time}`, `${time_2_hours}`),
+          };
+        }
       })
     );
 
