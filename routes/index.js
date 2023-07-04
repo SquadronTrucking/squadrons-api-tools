@@ -87,6 +87,7 @@ router.post("/estimate", async (req, res, next) => {
 
     res.json(dataArr);
   } catch (error) {
+    res.json("Error occured");
     console.log(error);
   }
 });

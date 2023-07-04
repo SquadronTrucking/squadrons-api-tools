@@ -39,13 +39,13 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-!(async function () {
-  let data = await calculateDistances(
-    "7144 Otay Mesa Rd, San Diego, CA 92154",
-    "17400 Von Karman Ave, Irvine, CA 92614",
-    "900 E Cooley Ave, San. Bernardino, Ca"
-  );
-  console.log(data);
-})();
+// !(async function () {
+//   let data = await calculateDistances(
+//     "7144 Otay Mesa Rd, San Diego, CA 92154",
+//     "17400 Von Karman Ave, Irvine, CA 92614",
+//     "900 E Cooley Ave, San. Bernardino, Ca"
+//   );
+//   console.log(data);
+// })();
 
 module.exports = app;
