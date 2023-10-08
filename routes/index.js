@@ -29,7 +29,7 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
 
 router.post("/estimate", async (req, res, next) => {
   try {
-    const { origin, destination, arrivalTime, stops } = req.body;
+    const { origin, destination, arrivalTime, stops, multiplier } = req.body;
 
     const dataArr = await Promise.all(
       stops.map(async (stop, index) => {
@@ -50,7 +50,10 @@ router.post("/estimate", async (req, res, next) => {
           ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
         );
 
-        const durationValue = data.rows[0].elements[0].duration.value;
+        let durationValue = data.rows[0].elements[0].duration.value;
+
+        durationValue = durationValue * multiplier;
+
         const durationText = data.rows[0].elements[0].duration.text;
 
         const arrivalTimeMoment = moment(arrivalTime, "HH:mm");
@@ -71,7 +74,8 @@ router.post("/estimate", async (req, res, next) => {
           let time_2_hours = await calculateDistances(
             `${stops[index]}`,
             `${stops[index + 1]}`,
-            `${destination}`
+            `${destination}`,
+            multiplier
           );
 
           let added_time = addTimes(arrivalTime, "12:45");
