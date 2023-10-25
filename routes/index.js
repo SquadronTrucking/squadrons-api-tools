@@ -14,7 +14,7 @@ router.use(express.json());
 router.get("/distance/:origins/:destinations", async (req, res, next) => {
   const { origins } = req.params;
   const { destinations } = req.params;
-  const key = "wNKvwwrlvWheyBOd84pP8uIsbqhW1";
+  const key = process.env.KEY;
   const url = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origins}&destinations=${destinations}&departure_time=now&key=${key}`;
 
   try {
@@ -37,7 +37,7 @@ router.post("/estimate", async (req, res, next) => {
           `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&mode=driving&destinations=${destination}&arrival_time=${moment(
             arrivalTime,
             "HH:mm"
-          ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+          ).unix()}&key=${key}`
         );
 
         //for time#calculation
@@ -47,7 +47,7 @@ router.post("/estimate", async (req, res, next) => {
           }&mode=driving&arrival_time=${moment(
             arrivalTime,
             "HH:mm"
-          ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+          ).unix()}&key=${key}`
         );
 
         const durationValue =

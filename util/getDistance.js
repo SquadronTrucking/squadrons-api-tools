@@ -1,6 +1,6 @@
 const axios = require("axios");
-
-const api_key = "wNKvwwrlvWheyBOd84pP8uIsbqhW1";
+require('dotenv').config()
+const api_key = process.env.KEY;
 
 async function calculateDistances(point_one, point_two, dest, multiplier) {
   const [first_estimate, second_estimate] = await Promise.all([
