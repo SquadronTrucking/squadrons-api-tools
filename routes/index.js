@@ -50,10 +50,8 @@ router.post("/estimate", async (req, res, next) => {
           ).unix()}&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
         );
 
-        let durationValue = data.rows[0].elements[0].duration.value;
-
-        durationValue = durationValue * multiplier;
-
+        const durationValue =
+          data.rows[0].elements[0].duration.value * multiplier;
         const durationText = data.rows[0].elements[0].duration.text;
 
         const arrivalTimeMoment = moment(arrivalTime, "HH:mm");

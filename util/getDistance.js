@@ -3,7 +3,6 @@ const axios = require("axios");
 const api_key = "wNKvwwrlvWheyBOd84pP8uIsbqhW1";
 
 async function calculateDistances(point_one, point_two, dest, multiplier) {
-  console.log(multiplier);
   const [first_estimate, second_estimate] = await Promise.all([
     axios.get(
       `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${point_one}&destinations=${point_two}&key=${api_key}`
@@ -16,29 +15,15 @@ async function calculateDistances(point_one, point_two, dest, multiplier) {
   const first_data = first_estimate.data;
   const { data } = second_estimate;
 
-  console.log(data.rows[0].elements[0], "from time 2 ");
-  console.log(
-    manipulateTime(first_data.rows[0].elements[0].duration.text, multiplier),
-    first_data.rows[0].elements[0].duration.text
-  );
-  console.log(
-    manipulateTime(data.rows[0].elements[0].duration.text, multiplier),
-    data.rows[0].elements[0].duration.text
-  );
-
-  //calculate time with multipler for vehicle speed control to detect near to accurate time
   let time = addTimeStrings(
-    await manipulateTime(
-      first_data.rows[0].elements[0].duration.text,
-      multiplier
-    ),
-    await manipulateTime(data.rows[0].elements[0].duration.text, multiplier)
+    manipulateTime(first_data.rows[0].elements[0].duration.text, multiplier),
+    manipulateTime(data.rows[0].elements[0].duration.text, multiplier)
   );
 
   return time;
 }
 
-async function manipulateTime(inputString, multiplier) {
+function manipulateTime(inputString, multiplier) {
   // Define regular expressions for different input formats
   const hoursRegex = /(\d+)\s*hour/;
   const minutesRegex = /(\d+)\s*mins/;
