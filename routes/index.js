@@ -10,11 +10,14 @@ var router = express.Router();
 
 router.use(express.json());
 
+//grab the api key
+const key = process.env.KEY;
+
 /* GET home page. */
 router.get("/distance/:origins/:destinations", async (req, res, next) => {
   const { origins } = req.params;
   const { destinations } = req.params;
-  const key = process.env.KEY;
+
   const url = `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origins}&destinations=${destinations}&departure_time=now&key=${key}`;
 
   try {
