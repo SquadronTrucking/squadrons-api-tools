@@ -1,11 +1,9 @@
 var express = require("express");
 var axios = require("axios");
 const moment = require("moment/moment");
-const {
-  calculateDistances,
-  addTimes,
-  subtractTimes,
-} = require("../util/getDistance");
+
+const { estimateTimeTwo } = require("../core/timeTwoEstimation");
+const { calculateTime2 } = require("../util/calculateTimeTwo");
 var router = express.Router();
 
 router.use(express.json());
@@ -30,67 +28,19 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
   }
 });
 
-router.post("/estimate", async (req, res, next) => {
+router.post("/estimate_time_two", async (req, res, next) => {
   try {
-    const { origin, destination, arrivalTime, stops, multiplier } = req.body;
+    const { trips_data, on_duty_time, hos, stop_time, base_addr, multiplier } = req.body;
 
-    const dataArr = await Promise.all(
-      stops.map(async (stop, index) => {
-        const { data } = await axios.get(
-          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&mode=driving&destinations=${destination}&arrival_time=${moment(
-            arrivalTime,
-            "HH:mm"
-          ).unix()}&key=${key}`
-        );
+    console.log(hos, stop_time);
 
-        //for time#calculation
-        const res = await axios.get(
-          `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${stop}&destinations=${
-            stop[index + 1]
-          }&mode=driving&arrival_time=${moment(
-            arrivalTime,
-            "HH:mm"
-          ).unix()}&key=${key}`
-        );
+    let estimated_data = await estimateTimeTwo(trips_data, base_addr, multiplier, stop_time);
 
-        const durationValue =
-          data.rows[0].elements[0].duration.value * multiplier;
-        const durationText = data.rows[0].elements[0].duration.text;
+    let time_two_calculated = calculateTime2(estimated_data, on_duty_time, hos)
 
-        const arrivalTimeMoment = moment(arrivalTime, "HH:mm");
-        const HOS = moment.duration({ hours: 12, minutes: 45 }); // 12 hours and 45 minutes HOS
-        arrivalTimeMoment.add(HOS); // Add HOS to the arrival time
-        arrivalTimeMoment.subtract(durationValue, "seconds"); // Subtract the duration from the arrival time
 
-        const formattedTime = arrivalTimeMoment.format("HH:mm");
 
-        if (index == stops.length - 1) {
-          console.log("Skipping time # 2 for final path");
-          return {
-            data,
-            "time#1": formattedTime,
-            "time#2": null,
-          };
-        } else {
-          let time_2_hours = await calculateDistances(
-            `${stops[index]}`,
-            `${stops[index + 1]}`,
-            `${destination}`,
-            multiplier
-          );
-
-          let added_time = addTimes(arrivalTime, "12:45");
-
-          return {
-            data,
-            "time#1": formattedTime,
-            "time#2": subtractTimes(`${added_time}`, `${time_2_hours}`),
-          };
-        }
-      })
-    );
-
-    res.json(dataArr);
+    res.json(time_two_calculated);
   } catch (error) {
     res.json("Error occured");
     console.log(error);
