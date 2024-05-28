@@ -30,15 +30,20 @@ router.get("/distance/:origins/:destinations", async (req, res, next) => {
 
 router.post("/estimate_time_two", async (req, res, next) => {
   try {
-    const { trips_data, on_duty_time, hos, stop_time, base_addr, multiplier } = req.body;
+    const { trips_data, on_duty_time, hos, stop_time, base_addr, multiplier } =
+      req.body;
 
-    console.log(hos, stop_time);
+    let estimated_data = await estimateTimeTwo(
+      trips_data,
+      base_addr,
+      multiplier,
+      stop_time
+    );
 
-    let estimated_data = await estimateTimeTwo(trips_data, base_addr, multiplier, stop_time);
+    console.log("*********Estimated data**********");
+    console.log(estimated_data);
 
-    let time_two_calculated = calculateTime2(estimated_data, on_duty_time, hos)
-
-
+    let time_two_calculated = calculateTime2(estimated_data, on_duty_time, hos);
 
     res.json(time_two_calculated);
   } catch (error) {
