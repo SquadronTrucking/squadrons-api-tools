@@ -33,6 +33,8 @@ router.post("/estimate_time_two", async (req, res, next) => {
     const { trips_data, on_duty_time, hos, stop_time, base_addr, multiplier } =
       req.body;
 
+      console.log(stop_time,multiplier,"*************stop time multiplier");
+
     let estimated_data = await estimateTimeTwo(
       trips_data,
       base_addr,
