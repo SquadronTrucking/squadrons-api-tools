@@ -1,10 +1,14 @@
 const axios = require("axios");
 
-//sometimes api calls fail so giving another retry once or twice works
-const fetch_distance = async (origin, destination, retries = 10) => {
+const fetch_distance = async (
+  origin,
+  destination,
+  retries = 10,
+  delay = 1000
+) => {
   try {
     let result = await axios.get(
-      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=wNKvwwrlvWheyBOd84pP8uIsbqhW1`
+      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.Key}`
     );
 
     if (result.data.rows[0].elements[0].status === "OK") {
@@ -12,15 +16,19 @@ const fetch_distance = async (origin, destination, retries = 10) => {
       return result;
     }
     if (result.data.rows[0].elements[0].status == "ZERO_RESULTS") {
-      throw new Error("Status is not OK");
+      throw new Error("Status is ZERO_RESULTS");
     }
   } catch (error) {
-    console.log(error);
+    console.error(`Error fetching distance: ${error.message}`);
+
     if (retries > 0) {
-      console.log(`Retrying... ${retries} attempts left.`);
-      return await fetch_distance(origin, destination, retries - 1);
+      console.log(
+        `Retrying... ${retries} attempts left. Waiting for ${delay}ms before retry.`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delay)); // Wait before retrying
+      return await fetch_distance(origin, destination, retries - 1, delay * 2); // Exponential backoff
     } else {
-      console.log(`Failed after 5 attempts.`);
+      console.log(`Failed after multiple attempts.`);
       return { status: false };
     }
   }
