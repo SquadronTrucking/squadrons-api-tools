@@ -1,4 +1,6 @@
 const axios = require("axios");
+
+//sometimes api calls fail so giving another retry once or twice works
 const fetch_distance = async (origin, destination, retries = 10) => {
   try {
     let result = await axios.get(
@@ -13,6 +15,7 @@ const fetch_distance = async (origin, destination, retries = 10) => {
       throw new Error("Status is not OK");
     }
   } catch (error) {
+    console.log(error);
     if (retries > 0) {
       console.log(`Retrying... ${retries} attempts left.`);
       return await fetch_distance(origin, destination, retries - 1);
