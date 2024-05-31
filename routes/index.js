@@ -11,6 +11,8 @@ router.use(express.json());
 //grab the api key
 const key = process.env.KEY;
 
+console.log(key);
+
 /* GET home page. */
 router.get("/distance/:origins/:destinations", async (req, res, next) => {
   const { origins } = req.params;
@@ -33,7 +35,7 @@ router.post("/estimate_time_two", async (req, res, next) => {
     const { trips_data, on_duty_time, hos, stop_time, base_addr, multiplier } =
       req.body;
 
-      console.log(stop_time,multiplier,"*************stop time multiplier");
+    console.log(stop_time, multiplier, "*************stop time multiplier");
 
     let estimated_data = await estimateTimeTwo(
       trips_data,
