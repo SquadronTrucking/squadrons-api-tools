@@ -1,5 +1,5 @@
 const axios = require("axios");
-
+console.log("Somewhrer this just logs key");
 const fetch_distance = async (
   origin,
   destination,
