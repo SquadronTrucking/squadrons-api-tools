@@ -1,7 +1,7 @@
 const axios = require("axios");
-require('dotenv').config()
+require("dotenv").config();
 
-console.log(process.evv.KEY,"******APIKEY************");
+console.log(process.envs.KEY, "******APIKEY************");
 console.log("Somewhrer this just logs key");
 
 const fetch_distance = async (
