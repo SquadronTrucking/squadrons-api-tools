@@ -35,6 +35,7 @@ const fetch_distance = async (
 };
 
 const estimateTimeTwo = async (trips_arr, base_addr, multiplier, stop_time) => {
+  console.log(trips_arr);
   //all the values are converted to seconds and from there are converted back to mins or hours format
   //that is why stop time has to be converted to seconds as well to make sure its added correctly
   stop_time = Number(stop_time) * Number(60);
