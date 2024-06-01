@@ -12,7 +12,7 @@ const fetch_distance = async (
 ) => {
   try {
     let result = await axios.get(
-      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.api_key}`
+      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.KEY}`
     );
 
     console.log(result);
