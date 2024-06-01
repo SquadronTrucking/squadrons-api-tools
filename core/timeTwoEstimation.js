@@ -11,7 +11,7 @@ const fetch_distance = async (
       `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.Key}`
     );
 
-    console.log(results);
+    console.log(result);
 
     if (result.data.rows[0].elements[0].status === "OK") {
       console.log(result.data.rows[0].elements);
