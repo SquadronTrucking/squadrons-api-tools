@@ -1,7 +1,7 @@
 const axios = require("axios");
 require("dotenv").config();
 
-console.log(process.envs.KEY, "******APIKEY************");
+console.log(process.envs.api_key, "******APIKEY************");
 console.log("Somewhrer this just logs key");
 
 const fetch_distance = async (
@@ -12,7 +12,7 @@ const fetch_distance = async (
 ) => {
   try {
     let result = await axios.get(
-      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.Key}`
+      `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.api_key}`
     );
 
     console.log(result);
