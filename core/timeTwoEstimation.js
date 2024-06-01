@@ -19,7 +19,7 @@ const fetch_distance = async (
       throw new Error("Status is ZERO_RESULTS");
     }
   } catch (error) {
-    console.error(`Error fetching distance: ${error.message}`);
+    console.error(`Error fetching distance: ${error}`);
 
     if (retries > 0) {
       console.log(
