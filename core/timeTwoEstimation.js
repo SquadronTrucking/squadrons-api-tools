@@ -7,15 +7,13 @@ console.log("Somewhrer this just logs key");
 const fetch_distance = async (
   origin,
   destination,
-  retries = 10,
+  retries = 5,
   delay = 1000
 ) => {
   try {
     let result = await axios.get(
       `https://api.distancematrix.ai/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&mode=driving&key=${process.env.KEY}`
     );
-
-    console.log(result);
 
     if (result.data.rows[0].elements[0].status === "OK") {
       console.log(result.data.rows[0].elements);
@@ -25,7 +23,7 @@ const fetch_distance = async (
       throw new Error("Status is ZERO_RESULTS");
     }
   } catch (error) {
-    console.error(`Error fetching distance: ${error}`);
+    console.error(`Error fetching distance: ${error.message}`);
 
     if (retries > 0) {
       console.log(
